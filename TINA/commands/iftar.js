@@ -1,5 +1,6 @@
 const axios = require("axios");
 const { getStreamFromURL } = global.utils;
+
 module.exports.config = {
     name: "ramadan",
     version: "1.0.0",
@@ -11,8 +12,7 @@ module.exports.config = {
     usages: "iftar Time",
     cooldowns: 5,
     dependencies: {
-    category: "Religion",
-    guide: { en:"{pn} district/state "},
+    
   },
 
   module.exports.run: async function ({ api, args, message, event}) {
