@@ -1,21 +1,18 @@
 const axios = require("axios");
 const { getStreamFromURL } = global.utils;
 
-module.exports.config = {
-    name: "ramadan",
-    version: "1.0.0",
-    hasPermission: 0,
-    credits: "RAHAT",
-    description: "This command provides Ramadan timings information for a given city.",
-    usePrefix: true,
-    commandCategory: "Khan Rahul RK",
-    usages: "iftar Time",
-    cooldowns: 5,
-    dependencies: {
-    
+module.exports.run = {
+    name: "ramadan",
+    version: "1.0",
+    creator: "Khan Rahul RK🥰",
+    countDown: 5,
+    Description: "This command provides Ramadan timings information for a given city.",
+    hasPermission : 0,
+    commandCategory: "Khan Rahul RK Iftar Time",
+    guide: { en:"{pn} district/state "},
   },
 
-  module.exports.run: async function ({ api, args, message, event}) {
+  module.export.run: async function ({ api, args, message, event}) {
     try {
       if (args.length === 0) {
         message.reply("Please provide a city/state name.");
