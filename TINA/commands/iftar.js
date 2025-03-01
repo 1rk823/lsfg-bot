@@ -1,72 +1,39 @@
-const axios = require("axios");
-const { getStreamFromURL } = global.utils;
-
-module.exports.run = {
-    name: "ramadan",
+module.exports = {
+  config: {
+    name: "ifter",
+    aliases: ["ramadan"],
     version: "1.0",
-    creator: "Khan Rahul RK🥰",
-    countDown: 5,
-    Description: "This command provides Ramadan timings information for a given city.",
-    hasPermission : 0,
-    commandCategory: "Khan Rahul RK Iftar Time",
-    guide: { en:"{pn} district/state "},
+    author: "𝐊𝐡𝐚𝐧 𝐑𝐚𝐡𝐮𝐥 𝐑𝐊",
+    description: "Get Iftar and Sehri time",
+    category: "Islamic",
+    commandCategory: "Islamic",
+    guide: {
+en:"[city] --c [color]"
+},
   },
+  run: async function ({ api, event, args }) {
+    const axios = require("axios");
+const dipto = "https://www.noobs-api.rf.gd/dipto" 
+    let city = args[0] || "Dhaka",
+        color = args.includes("--c") ? args[args.indexOf("--c") + 1] : null,
+        url = `${dipto}/ifter?city=${encodeURIComponent(city)}${color ? `&color=${encodeURIComponent(color)}` : "white"}`;
 
-  module.export.run: async function ({ api, args, message, event}) {
     try {
-      if (args.length === 0) {
-        message.reply("Please provide a city/state name.");
-        return;
-      }
+      let { data } = await axios.get(url);
+      if (!data.today) return api.sendMessage("⚠️ Invalid city.", event.threadID);
 
-      const botName = 'Halal Fox'; // add your bot name to show it in canvas image';
+      let msg = `🌙 ${data.today.ramadan} Kareem\n\n` +
+                `Today Sheri & Iftar Time\n🌄 Sheri Time: ${data.today.sehri}\n🕌 Fajr Time: ${data.today.fajr}\n🌆 Iftar Time: ${data.today.iftar}\n` +
+                `⏳ Time Remaining → Sheri: ${data.sahriRemain} | Iftar: ${data.iftarRemain}\n\n` +
+                `📆 Tomorrow: ${data.tomorrowDate}\n` +
+                `🌄 Sheri Time: ${data.tomorrow.sehri} | 🕌 Fajr Time: ${data.tomorrow.fajr} | 🌆 Iftar Time: ${data.tomorrow.iftar}\n\n` +
+                `⏰ Current Time: ${data.currentTime}\n` +
+                `📍 Location : ${data.city}`;
 
-      const cityName = args.join(" ");
-      message.reaction("⏰", event.messageID);
-      const apiUrl = `https://connect-foxapi.onrender.com/tools/ramadan?city=${encodeURIComponent(cityName)}&botName=${encodeURIComponent(botName)}`;
-      const response = await axios.get(apiUrl);
+      api.sendMessage({ body: msg, attachment: (await axios.get(data.imgUrl,{ responseType: "stream"})).data }, event.threadID, event.messageID);
 
-      if (!response.data.city) {
-        message.reply("City not found. Please check the spelling [don't use Direct 'country' name, use your city or state name ]");
-        return;
-      }
-
-      const {
-        city,
-        hijriDate,
-        localTime,
-        today,
-        tomorrow,
-        canvas_img
-      } = response.data;
-
-      const ramadanInfo = "🌙 Ramadan Timings 🕌\n" +
-        "❏ City: " + city + "\n" +
-        "❏ Date: " + today.date + "\n" +
-        "❏ Hijri Date: " + hijriDate + "\n" +
-        "❏ Current Time: " + localTime + "\n\n" +
-        "Today's:\n" +
-        "❏ Sahr: " + today.sahr + "\n" +
-        "❏ Iftar: " + today.iftar + "\n\n" +
-        "Tomorrow:\n" +
-        "❏ Date: " + tomorrow.date + "\n" +
-        "❏ Sahr: " + tomorrow.sahr + "\n" +
-        "❏ Iftar: " + tomorrow.iftar + "\n\n" +
-        "❏ Note: 1 minute preventative difference in Sehri (-1 min) & Iftar (+1 min)";
-
-      const stream = await getStreamFromURL(canvas_img);
-
-      message.reply({
-        body: ramadanInfo,
-        attachment: stream
-      });
-      await message.reaction("✅", event.messageID);
-
-
-
-    } catch (error) {
-      console.error(error);
-      message.reply("City not found. Please check the spelling [don't use Direct 'country' name, use your city or state name ]");
+    } catch {
+      api.sendMessage("⚠️ Failed to fetch data.", event.threadID);
     }
   }
 };
