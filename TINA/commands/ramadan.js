@@ -1,16 +1,14 @@
 const axios = require("axios");
 
 module.exports.config = {
-    name: "ramadan",
-    version: "1.0.0",
-    hasPermission: 0,
-    credits: "RAHAT",
-    description: "islam",
-    usePrefix: true,
-    commandCategory: "Khan Rahul RK",
-    usages: "ramadan time",
-    cooldowns: 5,
-    dependencies: {
+  name: "ramadan",
+  version: "1.1.0",
+  hasPermssion: 0,
+  credits: "Khan Rahul RK",
+  description: "Get Ramadan-related information",
+  commandCategory: "Islam",
+  usages: "ramadan",
+  cooldowns: 5
 };
 
 module.exports.run = async function ({ api, event }) {
